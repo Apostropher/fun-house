@@ -18,6 +18,8 @@ class SingleManningService implements SingleManningServiceInterface
         foreach ($indexedShifts as $dateString => $shifts) {
             $dayName = strtolower((new DateTime($dateString))->format('l'));
 
+            ksort($shifts);
+            
             $sum = 0;
             $previousEndDate = null;
             $previousStartDate = null;
@@ -78,7 +80,7 @@ class SingleManningService implements SingleManningServiceInterface
         foreach ($shifts as $shift) {
             $date = new DateTime($shift->start_time);
 
-            $index[$date->format('Y-m-d')][$shift->start_time.'|'.$shift->id] = $shift;
+            $index[$date->format('Y-m-d')][$shift->id.'|'.$shift->start_time] = $shift;
         }
 
         return $index;
