@@ -28,7 +28,7 @@ class SingleManningService implements SingleManningServiceInterface
                 $endTime = new DateTime($shift->end_time);
 
                 if ($previousEndDate && $startTime < $previousEndDate ) {
-                    $sum = $this->calculateMultipleShifts(
+                    $sum = $this->calculateOverlappingShifts(
                         $sum,
                         $startTime,
                         $endTime,
@@ -52,7 +52,7 @@ class SingleManningService implements SingleManningServiceInterface
         return $singleManningDTO;
     }
 
-    private function calculateMultipleShifts(
+    private function calculateOverlappingShifts(
         int $startingSum,
         DateTime $startTime,
         DateTime $endTime,
