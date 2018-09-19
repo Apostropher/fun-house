@@ -12,7 +12,7 @@ class SingleManningService implements SingleManningServiceInterface
     public function calculate(Rota $rota): SingleManningModelInterface
     {
         $singleManningDTO = new SingleManningModel();
-        
+
         $indexedShifts = $this->indexShiftsByDate($rota->shifts);
 
         foreach ($indexedShifts as $dateString => $shifts) {
@@ -21,8 +21,6 @@ class SingleManningService implements SingleManningServiceInterface
             $sum = 0;
             $previousEndDate = null;
             $previousStartDate = null;
-
-            echo $dayName.':'.PHP_EOL;
 
             foreach ($shifts as $dateTimeString => $shift) {
                 $startTime = new DateTime($shift->start_time);
