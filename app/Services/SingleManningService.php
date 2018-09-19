@@ -22,7 +22,6 @@ class SingleManningService implements SingleManningServiceInterface
             
             $sum = 0;
             $previousEndDate = null;
-            $previousStartDate = null;
 
             foreach ($shifts as $dateTimeString => $shift) {
                 $startTime = new DateTime($shift->start_time);
@@ -44,7 +43,6 @@ class SingleManningService implements SingleManningServiceInterface
                 }
 
                 $previousEndDate = $endTime;
-                $previousStartDate = $startTime;
             }
 
             $singleManningDTO[$dayName] = $sum;
