@@ -78,7 +78,7 @@ class SingleManningService implements SingleManningServiceInterface
         foreach ($shifts as $shift) {
             $date = new DateTime($shift->start_time);
 
-            $index[$date->format('Y-m-d')][$shift->start_time] = $shift;
+            $index[$date->format('Y-m-d')][$shift->start_time.'|'.$shift->id] = $shift;
         }
 
         return $index;
