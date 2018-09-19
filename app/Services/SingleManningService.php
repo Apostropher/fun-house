@@ -12,27 +12,65 @@ class SingleManningService implements SingleManningServiceInterface
     public function calculate(Rota $rota): SingleManningModelInterface
     {
         $singleManningDTO = new SingleManningModel();
-
-        /**
-         * Loop through associated shifts
-         * Index by date
-         * If date only has one shift, then calculate SM as difference of that single shift
-         * If date has more than one shift:
-         *      If start & end-dates do not overlap, the the SM is sum of all of the shift SMs
-         */
+        
         $indexedShifts = $this->indexShiftsByDate($rota->shifts);
 
         foreach ($indexedShifts as $dateString => $shifts) {
-            $dayName = (new DateTime($dateString))->format('l');
-            if (!isset($shifts[1])) {
-                $singleManningDTO[strtolower($dayName)] = $this->calculateTimeDifferenceInMinutes(
-                    new DateTime($shifts[0]->start_time),
-                    new DateTime($shifts[0]->end_time)
-                );
+            $dayName = strtolower((new DateTime($dateString))->format('l'));
+
+            $sum = 0;
+            $previousEndDate = null;
+            $previousStartDate = null;
+
+            echo $dayName.':'.PHP_EOL;
+
+            foreach ($shifts as $dateTimeString => $shift) {
+                $startTime = new DateTime($shift->start_time);
+                $endTime = new DateTime($shift->end_time);
+
+                if ($previousEndDate && $startTime < $previousEndDate ) {
+                    $sum = $this->calculateMultipleShifts(
+                        $sum,
+                        $startTime,
+                        $endTime,
+                        $previousEndDate
+                    );
+
+                } else {
+                    $sum += $this->calculateTimeDifferenceInMinutes(
+                        $startTime,
+                        $endTime
+                    );
+                }
+
+                $previousEndDate = $endTime;
+                $previousStartDate = $startTime;
             }
+
+            $singleManningDTO[$dayName] = $sum;
+
         }
 
         return $singleManningDTO;
+    }
+
+    private function calculateMultipleShifts(
+        int $startingSum,
+        DateTime $startTime,
+        DateTime $endTime,
+        DateTime $previousEndDate
+    ) {
+        $intersectSum = $this->calculateTimeDifferenceInMinutes(
+            $startTime,
+            $previousEndDate
+        );
+
+        $endSum = $this->calculateTimeDifferenceInMinutes(
+            $previousEndDate,
+            $endTime
+        );
+
+        return ($startingSum - $intersectSum + $endSum);
     }
 
     private function indexShiftsByDate($shifts)
@@ -42,7 +80,7 @@ class SingleManningService implements SingleManningServiceInterface
         foreach ($shifts as $shift) {
             $date = new DateTime($shift->start_time);
 
-            $index[$date->format('Y-m-d')][] = $shift;
+            $index[$date->format('Y-m-d')][$shift->start_time] = $shift;
         }
 
         return $index;
