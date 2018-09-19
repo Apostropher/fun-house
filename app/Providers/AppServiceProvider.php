@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models;
+use App\Services;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public $bindings = [
         Models\SingleManningInterface::class => Models\SingleManning::class,
+        Services\SingleManningServiceInterface::class => Services\SingleManningService::class,
     ];
 
     /**

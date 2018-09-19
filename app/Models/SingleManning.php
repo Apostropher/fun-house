@@ -12,7 +12,7 @@ class SingleManning extends Dto implements SingleManningInterface
 
     protected $wednesday = 0;
 
-    protected $thursday = 0
+    protected $thursday = 0;
 
     protected $friday = 0;
 
